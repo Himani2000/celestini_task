@@ -5,8 +5,8 @@ import os
 import sys
 #directory = "/celestini_task/"
 #files = os.listdir(directory)
-GT_Save="./Ground_Truth/"
-Input_Save="./Input/"
+GT_Save="/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/Ground_Truth"
+Input_Save="/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/Input"
 #Categories=["Dog", "Cat"]
 
 
@@ -18,6 +18,7 @@ print("\n\n\nimages=\n", images)'''
 
 Directory= "/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/MiddEval3-GT0-Q/trainingQ/"
 files = os.listdir(Directory)
+print(files)
 
 '''
 for category in Categories:
@@ -40,8 +41,18 @@ for file in files:
 	for img in os.listdir(path):
 		#images.append(img)
 		#print("path= " , "\n\n\n\n", img)
+		print("path = " , path )
+		image=img.split('.')
+		print(image)
+		#if (img[1]=='png')):
+
+		if (image[1] != 'png'):
+			continue
+
 		img_array=cv2.imread(os.path.join(path, img))
-		cv2.imshow('image', img_array)
+		#print(file)
+		print("img = ", img)
+		#cv2.imshow('image', img_array)
 		#print(img_array)
 		#plt.imshow(img_array)
 		#plt.show()
@@ -54,7 +65,8 @@ for file in files:
 		#cv2.imwrite(GT_Save + "/" +str(img) , img_array )
 			
 		#elif img[5]=='N' and img[6]=='O':
-		cv2.imwrite(Input_Save + "/"  + "_" +str(img) , img_array)		
+		#if(img_array.endswith('.png'):
+		cv2.imwrite(GT_Save + "/"  + str(file) + str(img)  , img_array)		
 	
 #print(images)
 
