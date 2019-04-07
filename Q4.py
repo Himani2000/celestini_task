@@ -3,16 +3,69 @@ import random
 import numpy as np
 import matplotlib
 matplotlib.use("TkAgg")
+import os   
 from matplotlib import pyplot as plt
 
 
 grayscale_max = 255
 
+dirsave="./Results"
+dirGT="./Ground_Truth"
+dirInput="./Input"
 
-def load_image(filename):
-    image = cv2.imread(filename, cv2.IMREAD_GRAYSCALE)
-    return image
 
+def load_image_Input():
+
+    files = os.listdir(dirInput)
+
+    filepaths_IP = [os.path.join(dirInput,i) for i in files]
+    #print(filepaths_IP)
+    #print("Directory= \n\n\n\n", directory.split('/'))
+    #print(directory)
+
+    print("The value of i is ", i)
+    for i, j in filepaths_IP, range(filepaths_IP):
+        img_l = cv2.imread(i)
+        print ("the value of i is " , i)
+        img_r=cv2.imread(j+1)
+
+        #print(i)
+        #i=i+2
+
+        #print("i=", i)
+        #try:
+         #   img.shape[2] == 3
+        #except:
+         #   continue
+        return img_l, img_r
+
+def load_image_GT():
+
+    files = os.listdir(dirGT)
+
+    filepaths_GT = [os.path.join(dirGT,i) for i in files]
+    #print(filepaths_GT)
+    #print("Directory= \n\n\n\n", directory.split('/'))
+    #print(directory)
+    for i, j in filepaths_GT, range(filepaths_GT):
+        img_l = cv2.imread(i)
+        img_r=cv2.imread(i+1)
+
+        #print(i)
+        i=i+2
+
+        #print("i=", i)
+        #try:
+         #   img.shape[2] == 3
+        #except:
+         #   continue
+        return img_l, img_r
+
+
+
+
+
+    
 
 def show_image(title, image):
     max_val = image.max()
@@ -187,9 +240,8 @@ def consistency_map_mse_r(d_map_left, d_map_right, right_ground_truth):
 
 
 def main():
-    l = load_image('view1.png')
-    r = load_image('view5.png')
-
+    l, r = load_image_Input()
+    
 
     # Disparity Maps
     d_map_lr_3 = disparity_map(l, r, 3, True)
@@ -206,9 +258,8 @@ def main():
 
 
     # Mean Squared Error
-    ground_truth_1 = load_image('disp1.png')
-    ground_truth_2 = load_image('disp5.png')
-
+    ground_truth_1, ground_truth_2 = load_image_GT()
+    
     mse_3_lr = mean_square_error(d_map_lr_3, ground_truth_1)
     print('MSE for view1 using block size of 3 is', mse_3_lr)
 
