@@ -16,8 +16,8 @@ print("\n\n\nimages=\n", images)'''
 #print( " files = \n\n\n\n\n", files)
 #print("\n\n\n\n")
 
-Directory= "/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/MiddEval3-GT0-Q/trainingQ/"
-files = os.listdir(Directory)
+Directory0= "/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/MiddEval3-GT0-Q/trainingQ/"
+files = os.listdir(Directory0)
 print(files)
 
 '''
@@ -37,7 +37,7 @@ for category in Categories:
 
 images=[]
 for file in files:
-	path=os.path.join(Directory, file)
+	path=os.path.join(Directory0, file)
 	for img in os.listdir(path):
 		#images.append(img)
 		#print("path= " , "\n\n\n\n", img)
@@ -52,41 +52,28 @@ for file in files:
 		img_array=cv2.imread(os.path.join(path, img))
 		#print(file)
 		print("img = ", img)
-		#cv2.imshow('image', img_array)
-		#print(img_array)
-		#plt.imshow(img_array)
-		#plt.show()
+		cv2.imwrite(GT_Save + "/" +"GT0_" + str(file) + str(img)  , img_array)		
 
-		#print("printing ith image: ", "\n\n")
-		#print(i[5])
+Directory1= "/media/dheeraj/9A26F0CB26F0AA01/WORK/CELESTINI/celestini_task/MiddEval3-GT1-Q/trainingQ/"
+files = os.listdir(Directory1)
+print(files)
 
-		
-		#if img[5]=='G' and img[6]=='T':
-		#cv2.imwrite(GT_Save + "/" +str(img) , img_array )
-			
-		#elif img[5]=='N' and img[6]=='O':
-		#if(img_array.endswith('.png'):
-		cv2.imwrite(GT_Save + "/"  + str(file) + str(img)  , img_array)		
-	
-#print(images)
-
-'''
-for i in images:
-	print("printing ith image: ", "\n\n")
-	print(i[5])
-	if i[5]=='G' and i[6]=='T':
-		cv2.imwrite(GT_Save + "/" +str(i) , )
-			
-	elif i[5]=='N' and i[6]=='O':
-		cv2.imwrite(Noisy_Save + "/" +str(i) , i)		
-			
-'''
-'''
 for file in files:
-	path=os.path.join(directory, files)
-    for img in os.listdir(path):
-    	img_array=cv2.imread(os.path.join(path, img), cv2.IMREAD_GRAYSCALE ) #converting the photo to greyscale
-    	plt.imshow(img_array)
-    	plt.show()
-    	    
-''' 
+	path=os.path.join(Directory1, file)
+	for img in os.listdir(path):
+		#images.append(img)
+		#print("path= " , "\n\n\n\n", img)
+		print("path = " , path )
+		image=img.split('.')
+		print(image)
+		#if (img[1]=='png')):
+
+		if (image[1] != 'png'):
+			continue
+
+		img_array=cv2.imread(os.path.join(path, img))
+		#print(file)
+		print("img = ", img)
+		cv2.imwrite(GT_Save + "/" +  "GT1_"+ str(file) + str(img)  , img_array)		
+
+	
