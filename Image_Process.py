@@ -97,40 +97,6 @@ def add_padding(input, padding):
     output[ padding : rows + padding, padding : columns + padding] = input
     return output
 
-'''
-def add_replicate_padding(image):
-    # zero_padded = add_padding(image, padding)
-    # size = image.shape[0]
-    top_row = image[0, :]
-    image = np.vstack((top_row, image))
-
-    bottom_row = image[-1, :]
-    image = np.vstack((image, bottom_row))
-
-    left_column = image[:, 0]
-    left_column = np.reshape(left_column, (left_column.shape[0], 1))
-    image = np.hstack((left_column, image))
-
-    right_column = image[:, -1]
-    right_column = np.reshape(right_column, (right_column.shape[0], 1))
-    image = np.hstack((image, right_column))
-
-    return image
-
-'''
-
-
-'''
-def get_search_bounds(column, block_size, width):
-    disparity_range = 25
-    left_bound = column - disparity_range
-    if left_bound < 0:
-        left_bound = 0
-    right_bound = column + disparity_range
-    if right_bound > width:
-        right_bound = width - block_size + 1
-    return left_bound, right_bound
-'''
 
 def search_bounds(column, block_size, width, rshift):
     disparity_range = 75
@@ -185,7 +151,7 @@ def disparity_map(left, right, block_size, rshift):
             else:
                 d_map[row, col] = shift - col
             print('Calculated Disparity at ('+str(row)+','+str(col)+') :', d_map[row,col])
-
+    #print(d_map.shape)
     return d_map
 
 
@@ -214,62 +180,6 @@ def correlation_coefficient(disparity_map, ground_truth):
 
 
 
-'''
-def consistency_map_mse_l(d_map_left, d_map_right, left_ground_truth):
-    rows, cols = d_map_left.shape
-    consistency_map = np.zeros((rows, cols))
-
-    for r in range(rows):
-        for c in range(cols):
-            left_pixel = d_map_left[r, c]
-
-            if cols > c - left_pixel > 0:
-                right_pixel = d_map_right[r, int(c - left_pixel)]
-            else:
-                right_pixel = d_map_right[r, c]
-
-            if left_pixel == right_pixel:
-                consistency_map[r, c] = left_pixel
-            else:
-                consistency_map[r, c] = 0
-
-    sum = 0
-    for r in range(rows):
-        for c in range(cols):
-            if consistency_map[r, c] != 0:
-                sum = sum + (left_ground_truth[r, c] - consistency_map[r, c]) ** 2
-
-    mse_c_left = sum / (rows * cols)
-    return mse_c_left, consistency_map
-
-
-def consistency_map_mse_r(d_map_left, d_map_right, right_ground_truth):
-    rows, cols = d_map_right.shape
-    consistency_map = np.zeros((rows, cols))
-
-    for r in range(rows):
-        for c in range(cols):
-            right_pixel = d_map_right[r, c]
-
-            if c + right_pixel < cols:
-                left_pixel = d_map_left[r, int(c + right_pixel)]
-            else:
-                left_pixel = d_map_left[r, c]
-
-            if right_pixel == left_pixel:
-                consistency_map[r, c] = right_pixel
-            else:
-                consistency_map[r, c] = 0
-
-    sum = 0
-    for r in range(rows):
-        for c in range(cols):
-            if consistency_map[r, c] != 0:
-                sum = sum + (right_ground_truth[r, c] - consistency_map[r, c]) ** 2
-
-    mse_c_right = sum / (rows * cols)
-    return mse_c_right, consistency_map
-'''
 
 global d_map_lr_5
 global d_map_lr_7
@@ -292,14 +202,14 @@ def main():
     ground_truth_2 = load_image_GT1()
     
 
-    #for i,j in zip(l,r):
+    for i,j in zip(l,r):
          # For window size of 5
-        #d_map_lr_5 = disparity_map(i,j,5, True)
-        #show_image('D_Map_lr_5_', d_map_lr_5)
+        d_map_lr_5 = disparity_map(i,j,5, True)
+        show_image('D_Map_lr_5_', d_map_lr_5)
 
         # For window size of 7
-        #d_map_lr_7 = disparity_map(i,j,7, True)
-        #show_image('D_Map_lr_7_', d_map_lr_7)
+        d_map_lr_7 = disparity_map(i,j,7, True)
+        show_image('D_Map_lr_7_', d_map_lr_7)
     
 
 
@@ -310,38 +220,23 @@ def main():
     for i,j in zip(ground_truth_1,ground_truth_2):
          # For window size of 5
         print(i.shape)
+        print(d_map_lr_5.shape)
         loss_sm_5_lr = squared_mean_square_error(d_map_lr_5, i)
         print("Loss for window size 5  for GT0 is" , loss_sm_5_lr)
 
-        #loss_sm_5_lr = squared_mean_square_error(d_map_lr_5, j)
-        #print("Loss for window size 5  for GT1 is" , loss_sm_5_lr)
-
+        
         loss_sm_7_lr = squared_mean_square_error(d_map_lr_7, i)
         print("Loss for window size 5  for GT0 is" , loss_sm_7_lr)
 
-        #loss_sm_7_lr = squared_mean_square_error(d_map_lr_7, j)
-        #print("Loss for window size 5  for GT1 is" , loss_sm_7_lr)
-
-
-
-
+        
         loss_am_5_lr = absolute_mean_square_error(d_map_lr_5, i)
         print("Loss for window size 5  for GT0 is" , loss_am_5_lr)
 
-        #loss_am_5_lr = absolute_mean_square_error(d_map_lr_5, j)
-        #print("Loss for window size 5  for GT1 is" , loss_am_5_lr)
-
+        
         loss_am_7_lr = absolute_mean_square_error(d_map_lr_7, i)
         print("Loss for window size 5  for GT0 is" , loss_am_7_lr)
 
-        #loss_am_5_lr = absolute_mean_square_error(d_map_lr_7, j)
-        #print("Loss for window size 5  for GT1 is" , loss_am_7_lr)
-
-
-
-
-
-
+        
         loss_cc_5_lr = correlation_coefficient(d_map_lr_5, i)
         print("MSE for window size 5  for GT0 is" , loss_cc_5_lr)
 
@@ -354,87 +249,7 @@ def main():
         loss_cc_5_lr = correlation_coefficient(d_map_lr_7, j)
         print("MSE for window size 5  for GT1 is" , loss_cc_7_lr)
 
-   # mse_5_rl = mean_square_error(d_map_rl_5, ground_truth_2)
-    #print("MSE for %s using block size of 3 is" %(rname[2]), mse_5_rl)
-
-    #mse_9_lr = mean_square_error(d_map_lr_9, ground_truth_1)
-    #print("MSE for %s using block size of 9 is" %(lname[2]), mse_9_lr)
-
-    #mse_9_rl = mean_square_error(d_map_lr_3, ground_truth_2)
-    #print("MSE for %s using block size of 9 is" %(rname[2]), mse_9_rl)
-
-
-
-
-
-        #print(i.shape)
-        #print(j.shape)
-        # Mean Squared Error
-        #ground_truth_1=load_image_GT0()
-        #ground_truth_2 = load_image_GT1()
-    
-
-
-
-       # d_map_lr_5 = disparity_map(i,j 5, True)
-
-    
-    #cv2.imshow('r', r)
-    #cv2.waitKey(0)
-   # print('lname return = ', lname)
-    
-   # lname=lname.split('/')
-   # print('lname return = ', lname)
-    # Disparity Maps
-    #rname=rname.split('/')
-
-    #d_map_lr_5 = disparity_map(l, r, 5, True)
-    #show_image('D_Map_lr_block5_', d_map_lr_5, lname[2])
-
-    #d_map_rl_5 = disparity_map(r, l, 5, False)
-    #show_image('D_Map_rl_block5_', d_map_rl_5, rname[2])
-
-    #d_map_lr_9 = disparity_map(l, r, 9, True)
-    #show_image('D_Map_lr_block9_', d_map_lr_9, lname[2])
-
-    #d_map_rl_9 = disparity_map(r, l, 9, False)
-    #show_image('D_Map_rl_block9_', d_map_rl_9, rname[2])
-
-
-    # Mean Squared Error
-    #ground_truth_1=load_image_GT0()
-    #ground_truth_2 = load_image_GT1()
-    
-    #mse_5_lr = mean_square_error(d_map_lr_5, ground_truth_1)
-   # print("MSE for  %s using block size of 3 is" %(lname[2]), mse_5_lr)
-
-   # mse_5_rl = mean_square_error(d_map_rl_5, ground_truth_2)
-    #print("MSE for %s using block size of 3 is" %(rname[2]), mse_5_rl)
-
-    #mse_9_lr = mean_square_error(d_map_lr_9, ground_truth_1)
-    #print("MSE for %s using block size of 9 is" %(lname[2]), mse_9_lr)
-
-    #mse_9_rl = mean_square_error(d_map_lr_3, ground_truth_2)
-    #print("MSE for %s using block size of 9 is" %(rname[2]), mse_9_rl)
-
-    '''
-    # MSE after Consistency Check
-    mse_3c_left, c_map_3cl = consistency_map_mse_l(d_map_lr_3, d_map_rl_3, ground_truth_1)
-    cv2.imwrite('consistency_map_block3_view1.jpg', c_map_3cl)
-    print('MSE for view1 after Consistency check using block size of 3 is', mse_3c_left)
-
-    mse_3c_right, c_map_3cr = consistency_map_mse_r(d_map_lr_3, d_map_rl_3, ground_truth_2)
-    cv2.imwrite('consistency_map_block3_view5.jpg', c_map_3cr)
-    print('MSE for view5 after Consistency check using block size of 3 is', mse_3c_right)
-
-    mse_9c_left, c_map_9cl = consistency_map_mse_l(d_map_lr_9, d_map_rl_9, ground_truth_1)
-    cv2.imwrite('consistency_map_block9_view1.jpg', c_map_9cl)
-    print('MSE for view1 after Consistency check using block size of 9 is', mse_9c_left)
-
-    mse_9c_right, c_map_9cr = consistency_map_mse_r(d_map_lr_9, d_map_rl_9, ground_truth_2)
-    cv2.imwrite('consistency_map_block9_view5.jpg', c_map_9cr)
-    print('MSE for view5 after Consistency check using block size of 9 is'  , mse_9c_right)
-    '''
+   
     return
 
 
