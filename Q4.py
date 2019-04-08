@@ -24,10 +24,10 @@ def load_image_Input():
     #print(directory)
 
     print("The value of i is ", i)
-    for i, j in filepaths_IP, range(filepaths_IP):
+    for i, j in filepaths_IP:
         img_l = cv2.imread(i)
         print ("the value of i is " , i)
-        img_r=cv2.imread(j+1)
+        img_r=cv2.imread(i+1)
 
         #print(i)
         #i=i+2
@@ -72,7 +72,7 @@ def show_image(title, image):
     # image = np.absolute(image)
     image = np.divide(image, max_val)
     # cv2.imshow(title, image)
-    cv2.imwrite(title+str(random.randint(1, 100))+'.jpg', image*grayscale_max)
+    cv2.imwrite(title+str(random.randint(1, 100))+'.png', image*grayscale_max)
 
 
 def add_padding(input, padding):
@@ -101,11 +101,6 @@ def add_replicate_padding(image):
     image = np.hstack((image, right_column))
 
     return image
-
-
-def euclid_dist(a, b):
-    distance = np.linalg.norm(a - b)
-    return distance
 
 
 def get_search_bounds(column, block_size, width):
