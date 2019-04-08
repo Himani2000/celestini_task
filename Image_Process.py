@@ -24,7 +24,7 @@ def load_image_IP0():
 
     filepaths_IP = [os.path.join(dirIP0,i) for i in files]
     for i in filepaths_IP:
-        img_l = cv2.imread(i)
+        img_l = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
         return img_l
 
 
@@ -38,7 +38,7 @@ def load_image_IP1():
     
     #print("The value of i is ", i)
     for i in filepaths_IP:
-        img_r = cv2.imread(i)
+        img_r = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
         return img_r
 
 
@@ -51,7 +51,7 @@ def load_image_GT0():
 
     filepaths_GT = [os.path.join(dirGT0,i) for i in files]
     for i in filepaths_GT:
-        gt_0 = cv2.imread(i)
+        gt_0 = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
         return gt_0
 
 
@@ -64,14 +64,10 @@ def load_image_GT1():
     for i in filepaths_GT:
 
 
-        gt_1 = cv2.imread(i)
+        gt_1 = cv2.imread(i, cv2.IMREAD_GRAYSCALE)
         return gt_1
 
-
-
-
     
-
 def show_image(title, image):
     max_val = image.max()
     # image = np.absolute(image)
@@ -82,6 +78,7 @@ def show_image(title, image):
 
 def add_padding(input, padding):
     rows = input.shape[0]
+    print("Rows = ", rows)
     columns = input.shape[1]
     output = np.zeros((rows + padding * 2, columns + padding * 2), dtype=float)
     output[ padding : rows + padding, padding : columns + padding] = input
@@ -242,7 +239,10 @@ def consistency_map_mse_r(d_map_left, d_map_right, right_ground_truth):
 def main():
     l = load_image_IP0()
     r = load_image_IP1()
-
+    cv2.imshow('l', l)
+    
+    cv2.imshow('r', r)
+    cv2.waitKey(0)
     # Disparity Maps
     d_map_lr_3 = disparity_map(l, r, 3, True)
     show_image('D_Map_lr_block3_', d_map_lr_3)
